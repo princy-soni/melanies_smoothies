@@ -40,6 +40,10 @@ if ingredients_list:
             st.warning(f"Nutrition info for {fruit_chosen} not found.")
 
 # Submit order
+# Submit order
+order_filled = st.checkbox("Mark order as filled")
+
+# Submit order
 if st.button('Submit Order'):
     if not name_on_order.strip():
         st.warning("Please enter a name for your smoothie.")
@@ -50,9 +54,11 @@ if st.button('Submit Order'):
     else:
         ingredients_string = ', '.join(ingredients_list)
         my_insert_stmt = f"""
-            INSERT INTO smoothies.public.orders(name_on_order, ingredients)
-            VALUES ('{name_on_order}', '{ingredients_string}')
+            INSERT INTO smoothies.public.orders(name_on_order, ingredients, order_filled)
+            VALUES ('{name_on_order}', '{ingredients_string}', {order_filled})
         """
         session.sql(my_insert_stmt).collect()
         st.success("Your Smoothie is ordered!", icon="✅")
         st.stop()
+
+
