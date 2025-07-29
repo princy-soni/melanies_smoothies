@@ -22,7 +22,6 @@ ingredients_list = st.multiselect(
     my_dataframe,
     max_selections=5
 )
-order_filled = st.checkbox("Mark this order as filled", value=False)
 
 if ingredients_list:
     ingredient_string = ''
@@ -37,7 +36,7 @@ if ingredients_list:
     # Insert statement with order_filled
     my_insert_stmt = f"""
         INSERT INTO smoothies.public.orders (ingredients, name_on_order, order_filled)
-        VALUES ('{ingredient_string}', '{name_on_order}', {str(order_filled).upper()})
+        VALUES ('{ingredient_string}', '{name_on_order}')
     """
 
     # Submit button
