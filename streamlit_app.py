@@ -21,11 +21,13 @@ my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT
 ingredients_list = st.multiselect('Choose 5 ingredients:', my_dataframe, max_selections =5 )
 
 
-if ingredients_list : ingredients_string = ''
-    for fruit_chosen in ingredients_list
-        ingredients_string += fruit_chosen + ''
+if ingredients_list:
+    ingredients_string = ''
+    for fruit_chosen in ingredients_list:
+        ingredients_string += fruit_chosen + ' '
         smoothiefroot_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-        sf_df = st.dataframe(data = smoothiefroot_response.json(), use_container_width=True)
+        st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+
 
 # Check for valid response
 # if smoothiefroot_response.status_code == 200:
