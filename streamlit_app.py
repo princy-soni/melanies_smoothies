@@ -23,23 +23,21 @@ ingredients_list = st.multiselect(
     max_selections=5
 )
 
+
 if ingredients_list:
     ingredient_string = ''
+  
     for fruit_chosen in ingredients_list:
         ingredient_string += fruit_chosen +' '
 
         search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
         # st.write('The search value for ', fruit_chosen,' is ', search_on, '.')
         st.subheader(fruit_chosen + ' Nutrition Information')
-        smoothiefroot_response = requests.get("https://fruityvice.com/api/fruit/" + search_on)
+        smoothiefroot_response =requests.get(f"https://fruityvice.com/api/fruit/{search_on.lower()}")
         sf_df = st.dataframe(data = smoothiefroot_response.json(), use_container_width=True)
-    # Insert statement with order_filled
-    my_insert_stmt = f"""
-        INSERT INTO smoothies.public.orders (ingredients, name_on_order)
-        VALUES ('{ingredient_string}', '{name_on_order}')
-    """
-
-    # Submit button
-    if st.button('Submit Order'):
+    my_insert_stmt = """ insert into smoothies.public.orders(ingredients, name_on_order)
+        values ('""" + ingredient_string + """', '"""+name_on_order+"""')"""
+    time_to_insert = st.button('Submit Order')
+    if time_to_insert:
         session.sql(my_insert_stmt).collect()
-        st.success('Your Smoothie is ordered!', icon="✅")
+        st.success('Your Smoothie is ordered!', icon=":white_check_mark:")
