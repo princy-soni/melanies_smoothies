@@ -43,4 +43,4 @@ if ingredients_list:
     # Submit button
     if st.button('Submit Order'):
         session.sql(my_insert_stmt).collect()
-        st.success('Your Smoothie is ordered!', icon=":white_check_mark:")
+        st.success('Your Smoothie is ordered!', icon="✅")
