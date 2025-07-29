@@ -28,10 +28,10 @@ if ingredients_list:
     for fruit_chosen in ingredients_list:
         search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
 
-        st.write(f"The search value for {fruit_chosen} is {search_on}")
+        # st.write(f"The search value for {fruit_chosen} is {search_on}")
         st.subheader(f"{fruit_chosen} Nutrition Information")
 
-        response = requests.get(f"https://fruityvice.com/api/fruit/{search_on.lower()}")
+        response = requests.get(f"https://fruityvice.com/api/fruit/" + search_on)
         if response.status_code == 200:
             fruit_json = response.json()
             fruit_df_display = pd.json_normalize(fruit_json)
