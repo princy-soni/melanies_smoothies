@@ -17,36 +17,29 @@ session = cnx.session()
 
 # Get fruit list from Snowflake
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'), col('SEARCH_ON'))
-# External API call to fruityvice (this returns JSON)
 pd_df = my_dataframe.to_pandas()
-ingredients_list = st.multiselect('Choose 5 ingredients:', my_dataframe, max_selections =5 )
-
-
-if ingredients_list:
-    ingredients_string = ''
-    for fruit_chosen in ingredients_list:
-        ingredients_string += fruit_chosen + ' '
-        
-        search_on=pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
-        st.write('The search value for ', fruit_chosen,' is ', search_on, '
-        
-        st.subheader(fruit_chosen + 'Nutrition Information')
-        smoothiefroot_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-        # st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
-        # st.stop()
-# st.dataframe(pd_df)
-# st.stop()
-# Check for valid response
-# if smoothiefroot_response.status_code == 200:
-#     fruit_json = smoothiefroot_response.json()
-#     fruit_df_display = pd.json_normalize(fruit_json)  # Convert nested JSON to flat DataFrame
-#     st.dataframe(fruit_df_display, use_container_width=True)
-# else:
-#     st.error("Failed to fetch data from Fruityvice API. Please try again later.")
 
 # Multiselect for ingredients
+fruit_list = pd_df['FRUIT_NAME'].tolist()
+ingredients_list = st.multiselect('Choose up to 5 ingredients:', fruit_list, max_selections=5)
 
-# Submit button with validation
+# Show API data
+if ingredients_list:
+    for fruit_chosen in ingredients_list:
+        search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_chosen, 'SEARCH_ON'].iloc[0]
+
+        st.write(f"The search value for {fruit_chosen} is {search_on}")
+        st.subheader(f"{fruit_chosen} Nutrition Information")
+
+        response = requests.get(f"https://fruityvice.com/api/fruit/{search_on.lower()}")
+        if response.status_code == 200:
+            fruit_json = response.json()
+            fruit_df_display = pd.json_normalize(fruit_json)
+            st.dataframe(fruit_df_display, use_container_width=True)
+        else:
+            st.warning(f"Nutrition info for {fruit_chosen} not found.")
+
+# Submit order
 if st.button('Submit Order'):
     if not name_on_order.strip():
         st.warning("Please enter a name for your smoothie.")
