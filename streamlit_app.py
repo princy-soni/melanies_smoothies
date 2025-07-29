@@ -14,6 +14,8 @@ session = cnx.session()
 
 fruit_df = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 fruit_list = [row['FRUIT_NAME'] for row in fruit_df.collect()]
+smoothiefroot_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+sf_df = st.dataframe(data = smoothiefroot_response.json(), use_container_width = True)
 
 # Multiselect for ingredients
 ingredients_list = st.multiselect('Choose 5 ingredients:', fruit_list)
@@ -38,6 +40,3 @@ if st.button('Submit Order'):
         # st.write(my_insert_stmt)
         st.stop()
 import requests
-smoothiefroot_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-# st.text(smoothiefroot_response.json())
-sf.df = st.dataframe(data = smoothiefroot_response.json(), use_container_width = True)
