@@ -16,22 +16,26 @@ cnx = st.connection("snowflake")
 session = cnx.session()
 
 # Get fruit list from Snowflake
-fruit_df = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
-fruit_list = [row['FRUIT_NAME'] for row in fruit_df.collect()]
-
+my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'))
 # External API call to fruityvice (this returns JSON)
-smoothiefroot_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+ingredients_list = st.multiselect('Choose 5 ingredients:', my_dataframe, max_selections =5 )
+
+
+if ingredients_list : ingredients_string = ''
+    for fruit_chosen in ingredients_list
+        ingredients_string += fruit_chosen + ''
+        smoothiefroot_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+        sf_df = st.dataframe(data = smoothiefroot_response.json(), use_container_width=True)
 
 # Check for valid response
-if smoothiefroot_response.status_code == 200:
-    fruit_json = smoothiefroot_response.json()
-    fruit_df_display = pd.json_normalize(fruit_json)  # Convert nested JSON to flat DataFrame
-    st.dataframe(fruit_df_display, use_container_width=True)
-else:
-    st.error("Failed to fetch data from Fruityvice API. Please try again later.")
+# if smoothiefroot_response.status_code == 200:
+#     fruit_json = smoothiefroot_response.json()
+#     fruit_df_display = pd.json_normalize(fruit_json)  # Convert nested JSON to flat DataFrame
+#     st.dataframe(fruit_df_display, use_container_width=True)
+# else:
+#     st.error("Failed to fetch data from Fruityvice API. Please try again later.")
 
 # Multiselect for ingredients
-ingredients_list = st.multiselect('Choose 5 ingredients:', fruit_list)
 
 # Submit button with validation
 if st.button('Submit Order'):
