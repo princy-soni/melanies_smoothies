@@ -27,9 +27,11 @@ if ingredients_list:
         ingredients_string += fruit_chosen + ' '
         st.subheader(fruit_chosen + 'Nutrition Information')
         smoothiefroot_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-        st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
-        st.stop()
-
+        # st.dataframe(data=smoothiefroot_response.json(), use_container_width=True)
+        # st.stop()
+pd_df = my_dataframe.to_pandas()
+st.dataframe(pd_df)
+st.stop()
 # Check for valid response
 # if smoothiefroot_response.status_code == 200:
 #     fruit_json = smoothiefroot_response.json()
